@@ -12,4 +12,10 @@
         <x-icons.menu-fold-left x-show="isSidebarOpen" aria-hidden="true" class="hidden w-6 h-6 lg:block" />
         <x-heroicon-o-x aria-hidden="true" class="w-6 h-6 lg:hidden" />
     </x-button>
+
+    {{-- <x-button type="button" class="md:hidden" iconOnly variant="secondary" srText="Toggle dark mode"
+        @click="toggleTheme">
+        <x-heroicon-o-moon x-show="!isDarkMode" aria-hidden="true" class="w-6 h-6" />
+        <x-heroicon-o-sun x-show="isDarkMode" aria-hidden="true" class="w-6 h-6" />
+    </x-button> --}}
 </div>

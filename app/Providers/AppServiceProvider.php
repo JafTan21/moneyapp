@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\View\Components\Custom\EditInput;
+use App\View\Components\Custom\Input;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Blade::component('input', Input::class);
+        Blade::component('edit-input', EditInput::class);
     }
 }

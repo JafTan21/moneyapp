@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\BillController;
+use App\Http\Controllers\LaborController;
+use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\MoneyController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\SubContractorController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,26 +20,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+    Route::redirect('/', '/dashboard');
+
+    Route::get('/money', [MoneyController::class, 'index'])->name('money');
+    Route::get('/project', [ProjectController::class, 'index'])->name('project');
+    Route::get('/sub-contractor', [SubContractorController::class, 'index'])->name('sub-contractor');
+    Route::get('/labor', [LaborController::class, 'index'])->name('labor');
+    Route::get('/bill', [BillController::class, 'index'])->name('bill');
+    Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier');
+
+    //  to do
+    // Route::get('/material', [MaterialController::class, 'index'])->name('material');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-// useless routes
-// Just to demo sidebar dropdown links active states.
-Route::get('/buttons/text', function () {
-    return view('buttons-showcase.text');
-})->middleware(['auth'])->name('buttons.text');
-
-Route::get('/buttons/icon', function () {
-    return view('buttons-showcase.icon');
-})->middleware(['auth'])->name('buttons.icon');
-
-Route::get('/buttons/text-icon', function () {
-    return view('buttons-showcase.text-icon');
-})->middleware(['auth'])->name('buttons.text-icon');
 
 require __DIR__ . '/auth.php';

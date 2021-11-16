@@ -1,0 +1,1 @@
+<input wire:model="{{ $model }}" class="form-control" type="{{ $type ?? 'text' }}" />
