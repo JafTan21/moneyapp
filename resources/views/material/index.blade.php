@@ -29,6 +29,9 @@
     </x-slot>
 
     <div class="p-6 overflow-scroll bg-white rounded-md shadow-md dark:bg-dark-eval-1">
-        @livewire('material.material-history')
+        @livewire('summery.material-summery')
+
+        <hr>
+
     </div>
 </x-app-layout>

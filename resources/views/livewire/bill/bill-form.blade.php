@@ -1,7 +1,9 @@
 <div>
     @include('inc.success_error')
 
-    <x-input model="number" label="Number" />
+    <x-custom-input model="of" label="Date: " type="date" />
+    <x-custom-input model="number" label="Number" />
+
     <div class="form-group my-3">
         <p>Project</p>
         <select wire:model="project_id">
@@ -12,7 +14,8 @@
             @endforelse
         </select>
     </div>
-    <x-input model="amount" label="Amount" type="number" />
+    <x-custom-input model="amount" label="Amount" type="number" />
+
 
     <button class="btn btn-success" wire:click="save">
         Save

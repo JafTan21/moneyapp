@@ -1,1 +1,1 @@
-<input wire:model="{{ $model }}" class="form-control" type="{{ $type ?? 'text' }}" />
+<input style="width: 200px" wire:model="{{ $model }}" class="form-control" type="{{ $type ?? 'text' }}" />

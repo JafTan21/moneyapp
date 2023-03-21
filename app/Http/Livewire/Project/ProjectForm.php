@@ -43,6 +43,7 @@ class ProjectForm extends Component
             'sponsor' => $this->sponsor,
             'value' => $this->value,
             'description' => $this->description,
+            'progress' => $this->progress,
             'status' => $this->status,
         ]);
         $this->success = 'Saved';

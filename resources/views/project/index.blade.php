@@ -30,5 +30,6 @@
 
     <div class="p-6 overflow-scroll bg-white rounded-md shadow-md dark:bg-dark-eval-1">
         @livewire('project.project-history')
+        @livewire('project.project-task')
     </div>
 </x-app-layout>

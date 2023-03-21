@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Spatie\Permission\Models\Permission;
 
 class RegisteredUserController extends Controller
 {
@@ -46,6 +47,17 @@ class RegisteredUserController extends Controller
         ]);
 
         $user->assignRole('normal');
+        $user->syncPermissions(
+            Permission::query()
+                ->where('name', 'view-money-page')
+                ->orWhere('name', 'view-projects-page')
+                ->orWhere('name', 'view-supplier-page')
+                ->orWhere('name', 'view-bill-page')
+                ->orWhere('name', 'view-sub-contracts-page')
+                ->orWhere('name', 'view-labor-page')
+                ->orWhere('name', 'view-material-page')
+                ->get()
+        );
 
         event(new Registered($user));
 

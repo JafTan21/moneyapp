@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Searchable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,6 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     use HasRoles;
+    use Searchable;
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -24,6 +26,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+    ];
+
+    public static $searchables = [
+        'name',
+        'email',
     ];
 
     /**
@@ -73,5 +80,32 @@ class User extends Authenticatable
     public function suppliers()
     {
         return $this->hasMany(Supplier::class);
+    }
+
+    public function materials()
+    {
+        return $this->hasMany(Material::class);
+    }
+
+    public function contracted()
+    {
+        return $this->hasMany(ContractedForm::class);
+    }
+
+    // this is a recommended way to declare event handlers
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) { // before delete() method call this
+            $user->monies()->delete();
+            $user->projects()->delete();
+            $user->sub_contracts()->delete();
+            $user->labors()->delete();
+            $user->bills()->delete();
+            $user->suppliers()->delete();
+            $user->materials()->delete();
+            $user->contracted()->delete();
+        });
     }
 }

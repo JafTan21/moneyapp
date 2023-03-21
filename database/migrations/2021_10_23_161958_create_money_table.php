@@ -20,6 +20,7 @@ class CreateMoneyTable extends Migration
             $table->double('out')->nullable();
             $table->timestamp('of')->default(now());
             $table->text('description')->nullable();
+            $table->foreignId('project_id')->constrained();
             $table->timestamps();
         });
     }

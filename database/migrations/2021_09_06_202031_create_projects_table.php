@@ -20,7 +20,8 @@ class CreateProjectsTable extends Migration
             $table->timestamp('end')->nullable();;
             $table->string('sponsor')->nullable();
             $table->string('value')->nullable();;
-            $table->string('description')->nullable();;
+            $table->string('progress')->nullable();
+            $table->string('description')->nullable();
             $table->string('status')->nullable();
 
             $table->foreignId('user_id')->constrained();

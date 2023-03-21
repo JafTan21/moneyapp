@@ -2,11 +2,15 @@
 
 namespace App\Http\Livewire\Labor;
 
+use App\Constants\Constants;
 use App\Models\Labor;
+use Carbon\Carbon;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class LaborHistory extends Component
 {
+    use WithPagination;
     public $listeners = [
         're-render-labors-history' => 'render'
     ];
@@ -39,7 +43,7 @@ class LaborHistory extends Component
     {
         $this->editId = $id;
         $labor = Labor::where('id', $this->editId)->first();
-        $this->of = $labor->of;
+        $this->of = Carbon::parse($labor->of)->format('Y-m-d');
         $this->project_id = $labor->project_id;
         $this->daily_worker = $labor->daily_worker;
         $this->daily_foreman = $labor->daily_foreman;
@@ -73,14 +77,14 @@ class LaborHistory extends Component
 
     public function render()
     {
-        $data = Labor::search($this->search)->myData();
+        $data = Labor::search($this->search, 'of')->myData();
 
         if ($this->month != 'all') $data = $data->whereMonth('of', $this->month);
         if ($this->year != '') $data = $data->whereYear('of', $this->year);
         if ($this->day != '') $data = $data->whereDay('of', $this->day);
 
         return view('livewire.labor.labor-history', [
-            'data' => $data->paginate(20)
+            'data' => $data->paginate(Constants::$pagination_count)
         ]);
     }
 }

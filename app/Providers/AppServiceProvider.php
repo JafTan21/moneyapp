@@ -26,7 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Blade::component('input', Input::class);
+        Blade::component('custom-input', Input::class);
+
         Blade::component('edit-input', EditInput::class);
     }
 }

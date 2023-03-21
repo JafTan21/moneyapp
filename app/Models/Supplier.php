@@ -12,23 +12,38 @@ class Supplier extends Model
 
     public $fillable = [
         'contact',
-        'company',
+        // 'company',
         'mobile',
-        'email',
-        'product',
-        'user_id'
+        // 'email',
+        // 'product',
+        // 'material_id',
+        'user_id',
+
+        'bill',
+        'payment',
+        'balance'
     ];
 
     public static $searchables = [
         'contact',
-        'company',
+        // 'company',
         'mobile',
-        'email',
-        'product',
+        // 'email',
+        // 'product',
+
+        'bill',
+        'payment',
+        'balance',
+        // 'material_id',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function materials()
+    {
+        return $this->hasMany(Material::class);
     }
 }

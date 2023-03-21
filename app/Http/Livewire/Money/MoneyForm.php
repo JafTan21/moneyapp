@@ -11,6 +11,7 @@ class MoneyForm extends Component
     public $out;
     public $of;
     public $description;
+    public $project_id;
 
     public $success, $error;
 
@@ -20,6 +21,7 @@ class MoneyForm extends Component
         $this->out = 0;
         $this->of =     now();
         $this->description = '';
+        $this->project_id = '';
     }
 
     public function save()
@@ -30,17 +32,25 @@ class MoneyForm extends Component
             return;
         }
 
+        if (!$this->project_id) {
+            $this->success = '';
+            $this->error = 'Please select a project';
+            return;
+        }
+
         auth()->user()->monies()->create([
             'in' => $this->in,
             'out' => $this->out,
             'of' => $this->of,
-            'description' => $this->description
+            'description' => $this->description,
+            'project_id' => $this->project_id
         ]);
 
         $this->in = 0;
         $this->out = 0;
         $this->of =  null;
         $this->description = '';
+        $this->project_id = '';
 
         $this->success = 'Saved...';
         $this->error = '';

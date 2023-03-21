@@ -12,6 +12,7 @@
             <tr>
                 <td>#</td>
                 <td>Date</td>
+                <td>Project</td>
                 <td>Deposit</td>
                 <td>Withdraw</td>
                 <td>Description</td>
@@ -28,6 +29,15 @@
                 </td>
                 <td>
                     <input wire:model="of" class="form-control" type="date" />
+                </td>
+                <td>
+                    <select wire:model="project_id">
+                        <option value="0">-- Select --</option>
+                        @forelse (\App\Models\Project::select('id', 'name')->get() as $project)
+                        <option value="{{ $project->id }}">{{ $project->name }}</option>
+                        @empty
+                        @endforelse
+                    </select>
                 </td>
                 <td>
                     <input wire:model="in" class="form-control" type="text" />
@@ -52,6 +62,9 @@
                     {{ Carbon\Carbon::parse($money->of)->toDateSTring() }}
                 </td>
                 <td>
+                    {{ $money->project->name }}
+                </td>
+                <td>
                     {{ $money->in }}
                 </td>
                 <td>
@@ -63,7 +76,9 @@
                 <td>
                     <button class="btn btn-sm btn-info" wire:click="edit({{ $money->id }})">Edit</button>
                     |
-                    <button class="btn btn-sm btn-danger" wire:click="delete({{ $money->id }})">
+                    <button class="btn btn-sm btn-danger"
+                        onclick="confirm('Are you sure?') || event.stopImmediatePropagation()"
+                        wire:click="delete({{ $money->id }})">
                         Delete
                     </button>
                 </td>

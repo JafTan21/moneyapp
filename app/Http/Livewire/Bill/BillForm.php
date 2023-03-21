@@ -10,13 +10,15 @@ class BillForm extends Component
 
     public $number = '',
         $project_id = '',
-        $amount = '';
+        $amount = '',
+        $of = '';
 
     public function resetAll()
     {
         $this->number = '';
         $this->project_id = '';
         $this->amount = '';
+        $this->of = '';
     }
 
     public function save()
@@ -36,6 +38,7 @@ class BillForm extends Component
             'number' => $this->number,
             'project_id' => $this->project_id,
             'amount' => $this->amount,
+            'updated_at' => $this->of
         ]);
         $this->success = 'Saved';
         $this->error = '';

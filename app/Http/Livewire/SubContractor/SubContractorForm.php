@@ -8,6 +8,11 @@ class SubContractorForm extends Component
 {
     public $success, $error;
 
+    protected $listeners = [
+        'update-construction-groups' => 'render'
+    ];
+
+
     public $of,
         $project_id,
         $construction_group,

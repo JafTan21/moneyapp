@@ -2,13 +2,18 @@
 
 namespace App\Http\Livewire\SubContractor;
 
+use App\Constants\Constants;
 use App\Models\SubContract;
+use Carbon\Carbon;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class SubContractorHistory extends Component
 {
+    use WithPagination;
     public $listeners = [
-        're-render-sub-contracts-history' => 'render'
+        're-render-sub-contracts-history' => 'render',
+        'update-sub-contractors-history' => 'setValues'
     ];
 
     public $editId = '';
@@ -19,6 +24,13 @@ class SubContractorHistory extends Component
         $construction_group,
         $leader,
         $payment;
+
+    public $project_name, $group;
+    public function setValues($project_name, $group)
+    {
+        $this->project_name = $project_name;
+        $this->group = $group;
+    }
 
     public function resetAll()
     {
@@ -35,7 +47,7 @@ class SubContractorHistory extends Component
     {
         $this->editId = $id;
         $contract = SubContract::where('id', $this->editId)->first();
-        $this->of = $contract->of;
+        $this->of = Carbon::parse($contract->of)->format('Y-m-d');
         $this->project_id = $contract->project_id;
         $this->construction_group = $contract->construction_group;
         $this->leader = $contract->leader;
@@ -66,15 +78,41 @@ class SubContractorHistory extends Component
 
     public function render()
     {
-        $data = SubContract::search($this->search)->myData();
+        $data = SubContract::search($this->search, 'of')->myData()->with('project');;
 
         if ($this->month != 'all') $data = $data->whereMonth('of', $this->month);
         if ($this->year != '') $data = $data->whereYear('of', $this->year);
         if ($this->day != '') $data = $data->whereDay('of', $this->day);
 
+        if ($this->project_name) {
+            $data = $data->whereHas('project', function ($query) {
+                return $query->where('name', trim($this->project_name));
+            });
+        }
+        if ($this->group) {
+            $data  = $data->where('construction_group', trim($this->group));
+        }
 
         return view('livewire.sub-contractor.sub-contractor-history', [
-            'data' => $data->paginate(20)
+            'data' => $data->paginate(Constants::$pagination_count)
         ]);
+    }
+
+    public function refreshSummery()
+    {
+        $this->emit('set-date-values', $this->day, $this->month, $this->year);
+    }
+
+    public function updatedDay()
+    {
+        $this->refreshSummery();
+    }
+    public function updatedYear()
+    {
+        $this->refreshSummery();
+    }
+    public function updatedMonth()
+    {
+        $this->refreshSummery();
     }
 }

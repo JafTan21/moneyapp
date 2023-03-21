@@ -8,18 +8,27 @@ class SupplierForm extends Component
 {
     public $success = '', $error = '';
     public $contact = '',
-        $company = '',
+        // $company = '',
         $mobile = '',
-        $email = '',
-        $product = '';
+        // $email = '',
+        // $product = '',
+        $material_id = '',
+        $bill = '',
+        $payment = '',
+        $balance = '';
 
     public function resetAll()
     {
         $this->contact = '';
-        $this->company = '';
+        // $this->company = '';
         $this->mobile = '';
-        $this->email = '';
-        $this->product = '';
+        // $this->email = '';
+        // $this->product = '';
+        $this->material_id = '';
+
+        $this->bill = '';
+        $this->payment = '';
+        $this->balance = '';
 
         $this->success = '';
         $this->error = '';
@@ -29,10 +38,14 @@ class SupplierForm extends Component
     {
         auth()->user()->suppliers()->create([
             'contact' => $this->contact,
-            'company' => $this->company,
+            // 'company' => $this->company,
             'mobile' => $this->mobile,
-            'email' => $this->email,
-            'product' => $this->product,
+            // 'email' => $this->email,
+            // 'product' => $this->product,
+            // 'material_id' => $this->material_id,
+            // 'bill' => $this->bill,
+            'payment' => $this->payment,
+            // 'balance' => $this->balance,
         ]);
         $this->success = 'Saved';
         $this->error = '';

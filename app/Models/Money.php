@@ -13,11 +13,11 @@ class Money extends Model
     use HasFactory;
 
     public $fillable = [
-        'in', 'out', 'of', 'description', 'user_id'
+        'in', 'out', 'of', 'description', 'user_id', 'project_id'
     ];
 
     public static $searchables = [
-        'in', 'out', 'of', 'description'
+        'in', 'out', 'of', 'description', 'project_id'
     ];
 
     public $timestamps = [
@@ -29,5 +29,10 @@ class Money extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
     }
 }

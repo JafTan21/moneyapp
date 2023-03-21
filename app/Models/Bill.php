@@ -15,12 +15,16 @@ class Bill extends Model
         'project_id',
         'amount',
         'user_id',
+        'created_at',
+        'updated_at'
     ];
 
     public static $searchables = [
         'number',
         'project_id',
         'amount',
+        'created_at',
+        'updated_at'
     ];
 
     public function user()

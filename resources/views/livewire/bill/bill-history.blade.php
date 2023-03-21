@@ -6,6 +6,7 @@
         <thead>
             <tr>
                 <td># </td>
+                <td>Date</td>
                 <td>Number</td>
                 <td>Project</td>
                 <td>Amount</td>
@@ -19,6 +20,9 @@
             <tr>
                 <td>
                     {{ $bill->id }}
+                </td>
+                <td>
+                    <x-edit-input model="of" type="date" />
                 </td>
                 <td>
                     <x-edit-input model="number" />
@@ -46,6 +50,9 @@
                     {{ $bill->id }}
                 </td>
                 <td>
+                    {{ Carbon\Carbon::parse($bill->updated_at)->toDateSTring() }}
+                </td>
+                <td>
                     {{ $bill->number }}
                 </td>
                 <td>
@@ -57,7 +64,9 @@
                 <td>
                     <button class="btn btn-sm btn-info" wire:click="edit({{ $bill->id }})">Edit</button>
                     |
-                    <button class="btn btn-sm btn-danger" wire:click="delete({{ $bill->id }})">
+                    <button class="btn btn-sm btn-danger"
+                        onclick="confirm('Are you sure?') || event.stopImmediatePropagation()"
+                        wire:click="delete({{ $bill->id }})">
                         Delete
                     </button>
                 </td>

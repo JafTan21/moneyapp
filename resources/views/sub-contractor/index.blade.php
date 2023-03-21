@@ -1,7 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
+        <div class="p-6 overflow-scroll bg-white rounded-md shadow-md dark:bg-dark-eval-1">
+            <a data-bs-toggle="collapse" href="#ConstructorGroups" role="button" aria-expanded="false"
+                aria-controls="ConstructorGroups" class="btn btn-primary">Construction groups</a>
+
+            @livewire('construction-group')
+        </div>
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <h2 class="text-xl font-semibold leading-tight">
+
+
+            <h2 class="text-xl font-semibold leading-tight mt-3">
                 {{ __('Sub Contractor') }}
             </h2>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMoney">
@@ -29,6 +37,11 @@
     </x-slot>
 
     <div class="p-6 overflow-scroll bg-white rounded-md shadow-md dark:bg-dark-eval-1">
+
+        @livewire('summery.sub-contractor-summery')
+
+        <hr>
+
         @livewire('sub-contractor.sub-contractor-history')
     </div>
 </x-app-layout>

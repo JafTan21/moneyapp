@@ -7,10 +7,15 @@
             <tr>
                 <td># </td>
                 <td>Contact</td>
-                <td>Company</td>
+                {{-- <td>Company</td> --}}
                 <td>Mobile</td>
-                <td>Email</td>
-                <td>Product</td>
+                {{-- <td>Email</td> --}}
+                <td>Products</td>
+
+                <td>Bill</td>
+                <td>Payment</td>
+                <td>Balance</td>
+
                 <td>Actions</td>
             </tr>
         </thead>
@@ -25,18 +30,34 @@
                 <td>
                     <x-edit-input model="contact" />
                 </td>
-                <td>
+                {{-- <td>
                     <x-edit-input model="company" />
-                </td>
+                </td> --}}
                 <td>
                     <x-edit-input model="mobile" />
                 </td>
-                <td>
+                {{-- <td>
                     <x-edit-input model="email" />
+                </td> --}}
+
+                <td>
+                    <ul>
+                        @forelse ($supplier->materials as $material)
+                        <li>{{ $material->material_name }},</li>
+                        @empty
+                        @endforelse
+                    </ul>
                 </td>
                 <td>
-                    <textarea wire:model="product" class="form-control"></textarea>
+                    {{ $supplier->materials->sum('bill') }}
                 </td>
+                <td>
+                    <x-edit-input model="payment" />
+                </td>
+                <td>
+                    {{ $supplier->materials->sum('bill') - $supplier->payment}}
+                </td>
+
                 <td>
                     <button class="btn  btn-success" wire:click="save({{ $supplier->id }})">Save</button>
                 </td>
@@ -50,22 +71,36 @@
                 <td>
                     {{ $supplier->contact }}
                 </td>
-                <td>
+                {{-- <td>
                     {{ $supplier->company }}
-                </td>
+                </td> --}}
                 <td>
                     {{ $supplier->mobile }}
                 </td>
-                <td>
+                {{-- <td>
                     {{ $supplier->email }}
+                </td> --}}
+                <td>
+                    <ul>
+                        @forelse ($supplier->materials as $material)
+                        <li>{{ $material->material_name }},</li>
+                        @empty
+                        @endforelse
+                    </ul>
                 </td>
                 <td>
-                    {{ $supplier->product }}
+                    {{ $supplier->materials->sum('bill') }}
+                </td>
+                <td>{{ $supplier->payment }}</td>
+                <td>
+                    {{ $supplier->materials->sum('bill') - $supplier->payment}}
                 </td>
                 <td>
                     <button class="btn btn-sm btn-info" wire:click="edit({{ $supplier->id }})">Edit</button>
                     |
-                    <button class="btn btn-sm btn-danger" wire:click="delete({{ $supplier->id }})">
+                    <button class="btn btn-sm btn-danger"
+                        onclick="confirm('Are you sure?') || event.stopImmediatePropagation()"
+                        wire:click="delete({{ $supplier->id }})">
                         Delete
                     </button>
                 </td>

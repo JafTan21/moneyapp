@@ -2,12 +2,15 @@
 
 namespace App\Http\Livewire\Money;
 
+use App\Constants\Constants;
 use App\Models\Money;
 use Carbon\Carbon;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class MoneyHistory extends Component
 {
+    use WithPagination;
     protected $listeners = [
         're-render-money-history' => 'render'
     ];
@@ -21,6 +24,7 @@ class MoneyHistory extends Component
     public $out;
     public $of;
     public $description;
+    public $project_id;
 
     public function resetAll()
     {
@@ -28,6 +32,7 @@ class MoneyHistory extends Component
         $this->out = 0;
         $this->of = null;
         $this->description = '';
+        $this->project_id = '';
 
         $this->editId = null;
     }
@@ -40,15 +45,20 @@ class MoneyHistory extends Component
         $this->out = $money->out;
         $this->of = Carbon::parse($money->of)->format('Y-m-d');
         $this->description = $money->description;
+        $this->project_id = $money->project_id;
     }
 
     public function save()
     {
+        if (!$this->project_id) {
+            return;
+        }
         Money::where('id', $this->editId)->first()->update([
             'in' => $this->in,
             'out' => $this->out,
             'of' => $this->of,
-            'description' => $this->description
+            'description' => $this->description,
+            'project_id' => $this->project_id
         ]);
 
         $this->resetAll();
@@ -61,8 +71,8 @@ class MoneyHistory extends Component
 
     public function render()
     {
-        $data = Money::search($this->search)->myData();
-        $sum = Money::myData();
+        $data = Money::search($this->search, 'of')->myData()->with('project');
+        $sum = $data;
 
         if ($this->month != 'all') {
             $data = $data->whereMonth('of', $this->month);
@@ -79,7 +89,8 @@ class MoneyHistory extends Component
             $sum = $sum->whereDay('of', $this->day);
         }
 
-        $data = $data->paginate(40);
+
+        $data = $data->paginate(Constants::$pagination_count);
         return view('livewire.money.money-history', [
             'data' => $data,
             'totalDeposit' => $sum->sum('in'),

@@ -1,12 +1,16 @@
 <?php
 
+use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\ContractedFormController;
 use App\Http\Controllers\LaborController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\MoneyController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SubContractorController;
 use App\Http\Controllers\SupplierController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,21 +25,78 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth')->group(function () {
+
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin', function () {
+            return view('admin-dashboard');
+        })
+            ->name('admin');
+
+
+
+        Route::post('/login-to-user', [UsersController::class, 'login_to_user'])
+            ->name('login_to_user');
+
+        Route::post('/delete-user', [UsersController::class, 'delete_user'])
+            ->name('delete_user');
+    });
+
+
+
+
+
+    Route::redirect('/', '/dashboard');
     Route::get('/dashboard', function () {
         return view('dashboard');
-    })->name('dashboard');
-    Route::redirect('/', '/dashboard');
+    })
+        // ->middleware('role:admin')
+        ->name('dashboard');
 
-    Route::get('/money', [MoneyController::class, 'index'])->name('money');
-    Route::get('/project', [ProjectController::class, 'index'])->name('project');
-    Route::get('/sub-contractor', [SubContractorController::class, 'index'])->name('sub-contractor');
-    Route::get('/labor', [LaborController::class, 'index'])->name('labor');
-    Route::get('/bill', [BillController::class, 'index'])->name('bill');
-    Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier');
+    Route::get('/money', [MoneyController::class, 'index'])
+        ->middleware('permission:view-money-page')
+        ->name('money');
 
-    //  to do
-    // Route::get('/material', [MaterialController::class, 'index'])->name('material');
+    Route::get('/project', [ProjectController::class, 'index'])
+        ->middleware('permission:view-projects-page')
+        ->name('project');
+
+    Route::get('/sub-contractor', [SubContractorController::class, 'index'])
+        ->middleware('permission:view-sub-contracts-page')
+        ->name('sub-contractor');
+
+    Route::get('/labor', [LaborController::class, 'index'])
+        ->middleware('permission:view-labor-page')
+        ->name('labor');
+
+    Route::get('/bill', [BillController::class, 'index'])
+        ->middleware('permission:view-bill-page')
+        ->name('bill');
+
+    Route::get('/supplier', [SupplierController::class, 'index'])
+        ->middleware('permission:view-supplier-page')
+        ->name('supplier');
+
+    Route::get('/material', [MaterialController::class, 'index'])
+        ->middleware('permission:view-material-page')
+        ->name('material');
+
+    Route::get('/contracted', [ContractedFormController::class, 'index'])
+        ->middleware('permission:view-contracted-form')
+        ->name('contracted');
+
+    Route::get('/profile', [UsersController::class, 'profile'])
+        ->name('profile');
+
+    Route::post('/update-profile', [UsersController::class, 'update_profile'])->name('update_profile');
+    Route::post('/change-password', [UsersController::class, 'change_password'])->name('change_password');
 });
 
+Route::get('/make-admin', function () {
+    User::create([
+        'name' => 'create admin',
+        'email' => 'admin2@admin.com',
+        'password' => Hash::make('admin2@admin.com')
+    ])->assignRole('admin');
+});
 
 require __DIR__ . '/auth.php';

@@ -52,6 +52,7 @@ class PageGenerator extends Command
         $this->info("view created successfully");
 
         $this->warn("Don't forget to edit controller and add it to the web.php");
+        $this->warn("Add to SIDEBAR CONTENT to show it in the menu");
         return Command::SUCCESS;
     }
 }

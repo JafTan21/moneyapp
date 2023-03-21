@@ -34,7 +34,14 @@
                         @endforelse
                     </select> </td>
                 <td>
-                    <x-edit-input model="construction_group" />
+                    {{-- <x-edit-input model="construction_group" /> --}}
+                    <select wire:model="construction_group">
+                        <option value="0">-- Select --</option>
+                        @forelse (\App\Models\ConstructionGroup::select('name')->get() as $cg)
+                        <option value="{{ $cg->name }}">{{ $cg->name }}</option>
+                        @empty
+                        @endforelse
+                    </select>
                 </td>
                 <td>
                     <x-edit-input model="leader" />
@@ -70,7 +77,9 @@
                 <td>
                     <button class="btn btn-sm btn-info" wire:click="edit({{ $contract->id }})">Edit</button>
                     |
-                    <button class="btn btn-sm btn-danger" wire:click="delete({{ $contract->id }})">
+                    <button class="btn btn-sm btn-danger"
+                        onclick="confirm('Are you sure?') || event.stopImmediatePropagation()"
+                        wire:click="delete({{ $contract->id }})">
                         Delete
                     </button>
                 </td>
