@@ -15,6 +15,7 @@
                 <td>Project</td>
                 <td>Supplier</td>
                 <td>Material Name</td>
+                <td>Material Group</td>
                 <td>Quantity</td>
                 <td>Rate</td>
                 {{-- <td>Transporation Cost</td>
@@ -60,8 +61,15 @@
                         @empty
                         @endforelse
                     </select>
-
-                    {{-- <x-edit-input model="material_name" /> --}}
+                </td>
+                <td>
+                    <select wire:model="material_group">
+                        <option value="0">-- Select --</option>
+                        @forelse (\App\Constants\Constants::MATERIAL_GROUPS as $name)
+                        <option value="{{ $name }}">{{ $name }}</option>
+                        @empty
+                        @endforelse
+                    </select>
                 </td>
                 <td>
                     <x-edit-input model="quantity" />
@@ -105,6 +113,9 @@
                 </td>
                 <td>
                     {{ $material->material_name }}
+                </td>
+                <td>
+                    {{ $material->material_group }}
                 </td>
                 <td>
                     {{ $material->quantity }}

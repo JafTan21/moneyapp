@@ -18,13 +18,14 @@ class CreateMaterialsTable extends Migration
             $table->timestamp('of')->nullable();
             $table->foreignId('project_id')->constrained();
             $table->string('material_name')->nullable();
+            $table->string("material_group")->default(""); // 1. CIVIL 2. Electric 3. Tiles 4. Sanatary 5. Steel .. or more
             $table->double('quantity')->default(0);
             $table->double('rate')->default(0);
             $table->foreignId('supplier_id')->nullable()->constrained();
             $table->double('transporation_cost')->default(0);
             $table->double('labor_cost')->default(0);
             $table->foreignId('user_id')->constrained();
-            $table->string('unit')->nullable(); //  Kgs , CFT , SQF , Meter , Inch , Feet , Tons .  
+            $table->string('unit')->nullable(); //  Kgs , CFT , SQF , Meter , Inch , Feet , Tons .
             $table->timestamps();
         });
     }

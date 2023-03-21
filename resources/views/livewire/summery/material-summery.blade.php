@@ -18,13 +18,31 @@
                     <p>Material name</p>
                     <select wire:model="materialName">
                         <option value="">-- Select --</option>
-                        @forelse ($materials as $material)
+                        @forelse ($material_names as $material)
                         <option value="{{ $material->material_name }}">{{ $material->material_name }}</option>
                         @empty
                         @endforelse
                     </select>
-                    {{-- <input placeholder="Enter project name:" class="form-control" wire:model.500ms="project_name">
-                    <input placeholder="Enter material name:" class="form-control" wire:model.500ms="material_name"> --}}
+
+                    <p>Material group</p>
+                    <select wire:model="materialGroup">
+                        <option value="">-- Select --</option>
+                        @forelse ($material_groups as $material)
+                        <option value="{{ $material->material_group }}">{{ $material->material_group }}</option>
+                        @empty
+                        @endforelse
+                    </select>
+
+                    <p>Supplier</p>
+                    <select wire:model="supplier">
+                        <option value="">-- Select --</option>
+                        @forelse ($suppliers as $supplier)
+                        <option value="{{ $supplier->contact }}">{{ $supplier->contact }}</option>
+                        @empty
+                        @endforelse
+                    </select>
+
+
                 </div>
                 <div class="card-footer">
                     Total quantity: {{ $total_quantity }}

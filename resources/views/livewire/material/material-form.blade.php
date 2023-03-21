@@ -23,6 +23,16 @@
             @endforelse
         </select>
     </div>
+    <div class="form-group my-3">
+        <p>Material group</p>
+        <select wire:model="material_group">
+            <option value="0">-- Select --</option>
+            @forelse (\App\Constants\Constants::MATERIAL_GROUPS as $name)
+            <option value="{{ $name }}">{{ $name }}</option>
+            @empty
+            @endforelse
+        </select>
+    </div>
     {{-- <x-custom-input model="material_name" label="Material Name: " /> --}}
     <x-custom-input model="quantity" label="Quantity: " type="number" />
     <x-custom-input model="rate" label="Rate: " type="number" />

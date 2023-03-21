@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Material extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
+    use Searchable;
 
     public $fillable = [
         'of',
         'project_id',
         'material_name',
+        'material_group',
         'quantity',
         'supplier_id',
         // 'transporation_cost',
@@ -26,6 +28,7 @@ class Material extends Model
     public static $searchables = [
         'project_id',
         'material_name',
+        'material_group',
         'quantity',
         'supplier_id',
         // 'transporation_cost',

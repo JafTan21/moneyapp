@@ -4,8 +4,7 @@ namespace App\Constants;
 
 class Constants
 {
-
-    static $units = [
+    public static $units = [
         'Kgs',
         'CFT',
         'SQF',
@@ -20,7 +19,7 @@ class Constants
         'Box'
     ];
 
-    static $pagination_count = 20;
+    public static $pagination_count = 20;
 
 
     public const MATERIAL_NAMES = [
@@ -110,12 +109,21 @@ class Constants
         '3/4" MACHINE SCREW-2MM ',
         'READYMIX RMC ',
         '1/2 -CIRCULAR BOX'
-        
-        
-        
-        
-        
 
 
+
+
+
+
+
+    ];
+
+    public const MATERIAL_GROUPS=[
+        "CIVIL",
+        "Electric",
+        "Tiles",
+        "Sanatary",
+        "Steel",
+        "more"
     ];
 }

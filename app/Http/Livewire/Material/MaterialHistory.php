@@ -17,27 +17,33 @@ class MaterialHistory extends Component
     ];
 
     public $editId = '';
-    public $search = '', $month = 'all', $year = '', $day = '';
+    public $search = '';
+    public $month = 'all';
+    public $year = '';
+    public $day = '';
 
-    public
-        $of,
-        $project_id,
-        $material_name,
-        $quantity,
-        $supplier_id,
-        $transporation_cost,
-        $labor_cost,
-        $unit,
-        $rate;
+    public $of;
+    public $project_id;
+    public $material_name;
+    public $material_group;
+    public $quantity;
+    public $supplier_id;
+    public $transporation_cost;
+    public $labor_cost;
+    public $unit;
+    public $rate;
 
-    public $material,
-        $project;
+    public $material_group_search;
+    public $material_name_search;
+    public $supplier;
+    public $project;
 
     public function resetAll()
     {
         $this->of = '';
         $this->project_id = '';
         $this->material_name = '';
+        $this->material_group = '';
         $this->quantity = '';
         $this->supplier_id = '';
         // $this->transporation_cost = '';
@@ -55,6 +61,7 @@ class MaterialHistory extends Component
         $this->of = Carbon::parse($material->of)->format('Y-m-d');
         $this->project_id = $material->project_id;
         $this->material_name = $material->material_name;
+        $this->material_group = $material->material_group;
         $this->quantity = $material->quantity;
         $this->supplier_id = $material->supplier_id;
         // $this->transporation_cost = $material->transporation_cost;
@@ -74,6 +81,7 @@ class MaterialHistory extends Component
             'of' => $this->of,
             'project_id' => $this->project_id,
             'material_name' => $this->material_name,
+            'material_group' => $this->material_group,
             'quantity' => $this->quantity,
             'supplier_id' => $this->supplier_id,
             // 'transporation_cost' => $this->transporation_cost,
@@ -90,10 +98,12 @@ class MaterialHistory extends Component
         Material::where('id', $id)->firstOrFail()->delete();
     }
 
-    public function setValues($project, $material)
+    public function setValues($project, $material_name, $material_group, $supplier)
     {
         $this->project = $project;
-        $this->material = $material;
+        $this->material_name_search = $material_name;
+        $this->material_group_search = $material_group;
+        $this->supplier = $supplier;
     }
 
 
@@ -110,14 +120,27 @@ class MaterialHistory extends Component
                 return $query->where('name', trim($this->project));
             });
         }
-        if ($this->material) {
-            $data = $data->where('material_name', trim($this->material));
+        if ($this->supplier) {
+            $data = $data->whereHas('supplier', function ($query) {
+                return $query->where('contact', trim($this->supplier));
+            });
+        }
+        if ($this->material_name_search) {
+            $data = $data->where('material_name', trim($this->material_name_search));
+        }
+        if ($this->material_group_search) {
+            $data = $data->where('material_group', trim($this->material_group_search));
         }
 
-        if ($this->month != 'all') $data = $data->whereMonth('of', $this->month);
-        if ($this->year != '') $data = $data->whereYear('of', $this->year);
-        if ($this->day != '') $data = $data->whereDay('of', $this->day);
-
+        if ($this->month != 'all') {
+            $data = $data->whereMonth('of', $this->month);
+        }
+        if ($this->year != '') {
+            $data = $data->whereYear('of', $this->year);
+        }
+        if ($this->day != '') {
+            $data = $data->whereDay('of', $this->day);
+        }
 
         return view('livewire.material.material-history', [
             'data' => $data->with(['supplier'])->paginate(Constants::$pagination_count),

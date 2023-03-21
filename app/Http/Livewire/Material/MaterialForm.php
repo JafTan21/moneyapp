@@ -6,24 +6,26 @@ use Livewire\Component;
 
 class MaterialForm extends Component
 {
-    public $success = '', $error = '';
+    public $success = '';
+    public $error = '';
 
-    public
-        $of,
-        $project_id,
-        $material_name,
-        $quantity,
-        $supplier_id,
-        $transporation_cost,
-        $labor_cost,
-        $unit,
-        $rate;
+    public $of;
+    public $project_id;
+    public $material_name;
+    public $material_group;
+    public $quantity;
+    public $supplier_id;
+    public $transporation_cost;
+    public $labor_cost;
+    public $unit;
+    public $rate;
 
     public function resetAll()
     {
         $this->of = '';
         $this->project_id = '';
         $this->material_name = '';
+        $this->material_group = '';
         $this->quantity = '';
         $this->supplier_id = '';
         // $this->transporation_cost = '';
@@ -48,6 +50,7 @@ class MaterialForm extends Component
             'of' => $this->of,
             'project_id' => $this->project_id,
             'material_name' => $this->material_name,
+            'material_group' => $this->material_group,
             'quantity' => $this->quantity,
             'supplier_id' => $this->supplier_id,
             // 'transporation_cost' => $this->transporation_cost,
