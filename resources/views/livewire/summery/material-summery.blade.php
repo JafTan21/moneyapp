@@ -2,8 +2,12 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header d-flex items-center justify-between">
                     Material
+
+                    <button class="btn btn-info text-white" wire:click="export">
+                        Export
+                    </button>
                 </div>
                 <div class="card-body">
                     <p>Project name</p>

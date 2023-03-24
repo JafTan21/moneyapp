@@ -2,10 +2,12 @@
 
 namespace App\Http\Livewire\Summery;
 
+use App\Exports\MaterialExport;
 use App\Models\Material;
 use App\Models\Project;
 use App\Models\Supplier;
 use Livewire\Component;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MaterialSummery extends Component
 {
@@ -33,40 +35,10 @@ class MaterialSummery extends Component
 
     public function render()
     {
-        $total = Material::query()->myData();
+        $query = $this->getQuery();
 
-        if ($this->materialName) {
-            $total = $total->where('material_name', trim($this->materialName));
-        }
-        if ($this->materialGroup) {
-            $total = $total->where('material_group', trim($this->materialGroup));
-        }
-        if ($this->supplier) {
-            $total = $total->whereHas('supplier', function ($query) {
-                return $query->where('contact', trim($this->supplier));
-            });
-        }
-        if ($this->projectName) {
-            $total = $total->whereHas('project', function ($query) {
-                return $query->where('name', trim($this->projectName));
-            });
-        }
+        $total = $query->sum('quantity');
 
-
-
-        if ($this->month != 'all') {
-            $total = $total->whereMonth('of', $this->month);
-        }
-        if ($this->year != '') {
-            $total = $total->whereYear('of', $this->year);
-        }
-        if ($this->day != '') {
-            $total = $total->whereDay('of', $this->day);
-        }
-
-        $total = $total->sum('quantity');
-
-        // $this->emit('update-material-history', $this->projectName, $this->materialName);
         $this->i++;
         return view('livewire.summery.material-summery', [
             'total_quantity' => $total,
@@ -75,6 +47,52 @@ class MaterialSummery extends Component
             'material_groups' => Material::select('material_group')->distinct()->myData()->get(),
             'suppliers' => Supplier::select('contact')->distinct()->myData()->get(),
         ]);
+    }
+
+    private function getQuery()
+    {
+        $query = Material::query()->myData();
+
+        if ($this->materialName) {
+            $query = $query->where('material_name', trim($this->materialName));
+        }
+        if ($this->materialGroup) {
+            $query = $query->where('material_group', trim($this->materialGroup));
+        }
+        if ($this->supplier) {
+            $query = $query->whereHas('supplier', function ($q) {
+                return $q->where('contact', trim($this->supplier));
+            });
+        }
+        if ($this->projectName) {
+            $query = $query->whereHas('project', function ($q) {
+                return $q->where('name', trim($this->projectName));
+            });
+        }
+
+
+
+        if ($this->month != 'all') {
+            $query = $query->whereMonth('of', $this->month);
+        }
+        if ($this->year != '') {
+            $query = $query->whereYear('of', $this->year);
+        }
+        if ($this->day != '') {
+            $query = $query->whereDay('of', $this->day);
+        }
+
+        return $query;
+    }
+
+    public function export()
+    {
+        return Excel::download(
+            new MaterialExport(
+                $this->getQuery()
+            ),
+            'materials.xlsx'
+        );
     }
 
     public function refreshHistory()
