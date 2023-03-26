@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\ContractedForm;
 
 use App\Constants\Constants;
+use App\Exports\ContractedExport;
 use App\Models\ContractedForm;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ContractedFormHistory extends Component
 {
@@ -15,16 +17,18 @@ class ContractedFormHistory extends Component
         're-render-contracted-form-history' => 'render'
     ];
     public $editId = '';
-    public $search = '', $month = 'all', $year = '', $day = '';
+    public $search = '';
+    public $month = 'all';
+    public $year = '';
+    public $day = '';
 
-    public
-        $description = '',
-        $unit_of_works = '',
-        $quantity_of_work = '',
-        $unit_rate = '',
-        $completed_quantity = '',
-        $total_amount = '',
-        $project_id = '';
+    public $description = '';
+    public $unit_of_works = '';
+    public $quantity_of_work = '';
+    public $unit_rate = '';
+    public $completed_quantity = '';
+    public $total_amount = '';
+    public $project_id = '';
 
 
     public function resetAll()
@@ -55,7 +59,9 @@ class ContractedFormHistory extends Component
 
     public function save()
     {
-        if (!$this->project_id) return;
+        if (!$this->project_id) {
+            return;
+        }
 
         ContractedForm::where('id', $this->editId)->first()->update([
             'description' => $this->description,
@@ -78,14 +84,36 @@ class ContractedFormHistory extends Component
 
     public function render()
     {
+        return view('livewire.contracted-form.contracted-form-history', [
+            'data' => $this->getQuery()->paginate(Constants::$pagination_count)
+        ]);
+    }
+
+    private function getQuery()
+    {
         $data = ContractedForm::search($this->search, 'created_at')->myData();
 
-        if ($this->month != 'all') $data = $data->whereMonth('created_at', $this->month);
-        if ($this->year != '') $data = $data->whereYear('created_at', $this->year);
-        if ($this->day != '') $data = $data->whereDay('created_at', $this->day);
+        if ($this->month != 'all') {
+            $data = $data->whereMonth('created_at', $this->month);
+        }
+        if ($this->year != '') {
+            $data = $data->whereYear('created_at', $this->year);
+        }
+        if ($this->day != '') {
+            $data = $data->whereDay('created_at', $this->day);
+        }
 
-        return view('livewire.contracted-form.contracted-form-history', [
-            'data' => $data->paginate(Constants::$pagination_count)
-        ]);
+
+        return $data;
+    }
+
+    public function export()
+    {
+        return Excel::download(
+            new ContractedExport(
+                $this->getQuery()
+            ),
+            'contracted-form.xlsx'
+        );
     }
 }

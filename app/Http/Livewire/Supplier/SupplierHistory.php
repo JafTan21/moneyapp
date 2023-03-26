@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\Supplier;
 
 use App\Constants\Constants;
+use App\Exports\SupplierExport;
 use App\Models\Material;
 use App\Models\Supplier;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SupplierHistory extends Component
 {
@@ -16,17 +18,20 @@ class SupplierHistory extends Component
     ];
 
     public $editId = '';
-    public $search = '', $month = 'all', $year = '', $day = '';
+    public $search = '';
+    public $month = 'all';
+    public $year = '';
+    public $day = '';
 
-    public $contact = '',
-        // $company = '',
-        $mobile = '',
-        // $email = '',
-        // $product = '',
-        $material_id = '',
-        $bill = '',
-        $payment = '',
-        $balance = '';
+    public $contact = '';
+    // $company = '',
+    public $mobile = '';
+    // $email = '',
+    // $product = '',
+    public $material_id = '';
+    public $bill = '';
+    public $payment = '';
+    public $balance = '';
 
 
     public function resetAll()
@@ -64,7 +69,6 @@ class SupplierHistory extends Component
 
     public function save()
     {
-
         Supplier::where('id', $this->editId)->first()->update([
             'contact' => $this->contact,
             // 'company' => $this->company,
@@ -93,21 +97,41 @@ class SupplierHistory extends Component
         unset(
             Material::$searchables[array_search("project_id", Material::$searchables)]
         );
+
+        return view('livewire.supplier.supplier-history', [
+            'data' => $this->getQuery()->paginate(Constants::$pagination_count)
+        ]);
+    }
+
+    private function getQuery()
+    {
         $data = Supplier::search($this->search)->myData()
             ->with([
                 'materials' => function ($q) {
                     return $q->selectRaw('*, (rate * quantity) as bill');
                 }
             ]);
-        // ->selectRaw('SUM(quantity * rate) as bill');
 
-        if ($this->month != 'all') $data = $data->whereMonth('created_at', $this->month);
-        if ($this->year != '') $data = $data->whereYear('created_at', $this->year);
-        if ($this->day != '') $data = $data->whereDay('created_at', $this->day);
+        if ($this->month != 'all') {
+            $data = $data->whereMonth('created_at', $this->month);
+        }
+        if ($this->year != '') {
+            $data = $data->whereYear('created_at', $this->year);
+        }
+        if ($this->day != '') {
+            $data = $data->whereDay('created_at', $this->day);
+        }
 
-        return view('livewire.supplier.supplier-history', [
-            'data' => $data
-                ->paginate(Constants::$pagination_count)
-        ]);
+        return $data;
+    }
+
+    public function export()
+    {
+        return Excel::download(
+            new SupplierExport(
+                $this->getQuery()
+            ),
+            'supplier.xlsx'
+        );
     }
 }

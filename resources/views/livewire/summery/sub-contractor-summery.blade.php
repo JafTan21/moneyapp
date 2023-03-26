@@ -4,6 +4,9 @@
             <div class="card">
                 <div class="card-header">
                     Sub contractor summery
+
+
+                    <x-export-button />
                 </div>
                 <div class="card-body">
 
@@ -28,7 +31,6 @@
                 </div>
                 <div class="card-footer">
                     Total amount: {{ $total_amount }}
-
                 </div>
             </div>
         </div>

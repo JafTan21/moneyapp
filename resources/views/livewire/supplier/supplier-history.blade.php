@@ -1,6 +1,7 @@
 <div>
     <div class="row">
         @include('inc.searchable')
+        <x-export-button />
     </div>
     <table class="table mt-3">
         <thead>

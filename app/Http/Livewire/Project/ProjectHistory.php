@@ -3,12 +3,14 @@
 namespace App\Http\Livewire\Project;
 
 use App\Constants\Constants;
+use App\Exports\ProjectExport;
 use App\Models\Project;
 use App\Models\ProjectUser;
 use App\Models\User;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProjectHistory extends Component
 {
@@ -18,7 +20,10 @@ class ProjectHistory extends Component
     ];
 
     public $editId = '';
-    public $search = '', $month = 'all', $year = '', $day = '';
+    public $search = '';
+    public $month = 'all';
+    public $year = '';
+    public $day = '';
 
     public $users;
 
@@ -27,16 +32,17 @@ class ProjectHistory extends Component
         $this->users = User::select('id', 'name')->get();
     }
 
-    public $project_id, $user_id;
+    public $project_id;
+    public $user_id;
 
-    public $name,
-        $start,
-        $end,
-        $sponsor,
-        $value,
-        $description,
-        $progress,
-        $status;
+    public $name;
+    public $start;
+    public $end;
+    public $sponsor;
+    public $value;
+    public $description;
+    public $progress;
+    public $status;
 
     public function resetAll()
     {
@@ -68,7 +74,9 @@ class ProjectHistory extends Component
 
     public function save()
     {
-        if (!$this->editId) return;
+        if (!$this->editId) {
+            return;
+        }
         Project::where('id', $this->editId)->first()->update([
             'name' => $this->name,
             'start' => $this->start,
@@ -97,7 +105,9 @@ class ProjectHistory extends Component
 
     public function assignProjectToUser()
     {
-        if (!$this->project_id || !$this->user_id) return;
+        if (!$this->project_id || !$this->user_id) {
+            return;
+        }
 
         ProjectUser::firstOrCreate(
             ['project_id' => $this->project_id, 'user_id' => $this->user_id],
@@ -111,6 +121,13 @@ class ProjectHistory extends Component
 
     public function render()
     {
+        return view('livewire.project.project-history', [
+            'data' => $this->getQuery()->paginate(Constants::$pagination_count),
+        ]);
+    }
+
+    private function getQuery()
+    {
         $data = Project::search($this->search);
 
         if (!auth()->user()->hasRole('admin')) {
@@ -120,17 +137,28 @@ class ProjectHistory extends Component
             });
         }
 
-        // dd($data->toSql());
+
+        if ($this->month != 'all') {
+            $data = $data->whereMonth('start', $this->month);
+        }
+        if ($this->year != '') {
+            $data = $data->whereYear('start', $this->year);
+        }
+        if ($this->day != '') {
+            $data = $data->whereDay('start', $this->day);
+        }
 
 
-        if ($this->month != 'all') $data = $data->whereMonth('start', $this->month);
-        if ($this->year != '') $data = $data->whereYear('start', $this->year);
-        if ($this->day != '') $data = $data->whereDay('start', $this->day);
+        return $data;
+    }
 
-        // $data = $data->paginate(40);
-
-        return view('livewire.project.project-history', [
-            'data' => $data->paginate(Constants::$pagination_count),
-        ]);
+    public function export()
+    {
+        return Excel::download(
+            new ProjectExport(
+                $this->getQuery()
+            ),
+            'projects.xlsx'
+        );
     }
 }

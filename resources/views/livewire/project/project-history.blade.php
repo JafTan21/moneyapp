@@ -28,6 +28,9 @@
 
     <div class="row mt-3">
         @include('inc.searchable')
+
+        <x-export-button />
+
     </div>
     <table class="table mt-3">
         <thead>

@@ -1,6 +1,8 @@
 <div>
     <div class="row">
         @include('inc.searchable')
+
+
     </div>
     <table class="table mt-3">
         <thead>
@@ -32,7 +34,8 @@
                         <option value="{{ $project->id }}">{{ $project->name }}</option>
                         @empty
                         @endforelse
-                    </select> </td>
+                    </select>
+                </td>
                 <td>
                     {{-- <x-edit-input model="construction_group" /> --}}
                     <select wire:model="construction_group">

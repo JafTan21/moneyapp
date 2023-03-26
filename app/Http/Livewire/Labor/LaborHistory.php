@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\Labor;
 
 use App\Constants\Constants;
+use App\Exports\LaborExport;
 use App\Models\Labor;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LaborHistory extends Component
 {
@@ -15,15 +17,18 @@ class LaborHistory extends Component
         're-render-labors-history' => 'render'
     ];
     public $editId = '';
-    public $search = '', $month = 'all', $year = '', $day = '';
+    public $search = '';
+    public $month = 'all';
+    public $year = '';
+    public $day = '';
 
-    public $of = '',
-        $project_id = '',
-        $daily_worker = '',
-        $daily_foreman = '',
-        $construction_group = '',
-        $group_leader = '',
-        $daily_labor_payment = '';
+    public $of = '';
+    public $project_id = '';
+    public $daily_worker = '';
+    public $daily_foreman = '';
+    public $construction_group = '';
+    public $group_leader = '';
+    public $daily_labor_payment = '';
 
 
     public function resetAll()
@@ -54,7 +59,9 @@ class LaborHistory extends Component
 
     public function save()
     {
-        if (!$this->project_id) return;
+        if (!$this->project_id) {
+            return;
+        }
 
         Labor::where('id', $this->editId)->first()->update([
             'of' => $this->of,
@@ -77,14 +84,36 @@ class LaborHistory extends Component
 
     public function render()
     {
-        $data = Labor::search($this->search, 'of')->myData();
-
-        if ($this->month != 'all') $data = $data->whereMonth('of', $this->month);
-        if ($this->year != '') $data = $data->whereYear('of', $this->year);
-        if ($this->day != '') $data = $data->whereDay('of', $this->day);
-
         return view('livewire.labor.labor-history', [
-            'data' => $data->paginate(Constants::$pagination_count)
+            'data' => $this->getQuery()->paginate(Constants::$pagination_count)
         ]);
+    }
+
+    private function getQuery()
+    {
+        $query = Labor::search($this->search, 'of')->myData();
+
+        if ($this->month != 'all') {
+            $query = $query->whereMonth('of', $this->month);
+        }
+        if ($this->year != '') {
+            $query = $query->whereYear('of', $this->year);
+        }
+        if ($this->day != '') {
+            $query = $query->whereDay('of', $this->day);
+        }
+
+
+        return $query;
+    }
+
+    public function export()
+    {
+        return Excel::download(
+            new LaborExport(
+                $this->getQuery()
+            ),
+            'labor.xlsx'
+        );
     }
 }

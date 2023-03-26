@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\Bill;
 
 use App\Constants\Constants;
+use App\Exports\BillExport;
 use App\Models\Bill;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BillHistory extends Component
 {
@@ -14,14 +16,17 @@ class BillHistory extends Component
     protected $listeners = [
         're-render-bills-history' => 'render'
     ];
-    public $number = '',
-        $project_id = '',
-        $amount = '',
-        $of = '';
+    public $number = '';
+    public $project_id = '';
+    public $amount = '';
+    public $of = '';
 
     public $editId = '';
 
-    public $search = '', $month = 'all', $year = '', $day = '';
+    public $search = '';
+    public $month = 'all';
+    public $year = '';
+    public $day = '';
 
 
     public function resetAll()
@@ -64,14 +69,36 @@ class BillHistory extends Component
 
     public function render()
     {
+        return view('livewire.bill.bill-history', [
+            'data' => $this->getQuery()->paginate(Constants::$pagination_count)
+        ]);
+    }
+
+    private function getQuery()
+    {
         $data = Bill::search($this->search)->myData();
 
-        if ($this->month != 'all') $data = $data->whereMonth('updated_at', $this->month);
-        if ($this->year != '') $data = $data->whereYear('updated_at', $this->year);
-        if ($this->day != '') $data = $data->whereDay('updated_at', $this->day);
+        if ($this->month != 'all') {
+            $data = $data->whereMonth('updated_at', $this->month);
+        }
+        if ($this->year != '') {
+            $data = $data->whereYear('updated_at', $this->year);
+        }
+        if ($this->day != '') {
+            $data = $data->whereDay('updated_at', $this->day);
+        }
 
-        return view('livewire.bill.bill-history', [
-            'data' => $data->paginate(Constants::$pagination_count)
-        ]);
+
+        return $data;
+    }
+
+    public function export()
+    {
+        return Excel::download(
+            new BillExport(
+                $this->getQuery()
+            ),
+            'bill.xlsx'
+        );
     }
 }
