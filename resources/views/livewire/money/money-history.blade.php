@@ -6,6 +6,10 @@
             <p>Total withdraw: {{ $totalWithdraw}}</p>
             <p>Total saving: {{ $totalDeposit -$totalWithdraw }}</p>
         </div>
+
+        <button class="btn btn-info text-white" wire:click="export">
+            Export
+        </button>
     </div>
     <table class="table mt-3">
         <thead>

@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\HasMyData;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SubContract extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
+    use Searchable;
+    use HasMyData;
 
     public $fillable = [
         'of',

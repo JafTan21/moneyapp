@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use App\Models\Material;
 use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
@@ -13,15 +12,6 @@ class MaterialExport implements FromCollection
     public function __construct(Builder $query)
     {
         $this->query = $query;
-    }
-
-    public function headings(): array
-    {
-        return [
-            '#',
-            'User',
-            'Date',
-        ];
     }
 
     public function collection()
